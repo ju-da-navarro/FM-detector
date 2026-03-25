@@ -1,7 +1,7 @@
 import os
 import numpy as np
 from scipy.io import wavfile
-from espectro import espectro_promedio
+from espectro import determinar_espectro
 from interfaz import inicioInterfaz
 
 ## UTILS
@@ -20,9 +20,6 @@ def cargar_audios(carpeta):
 
     return audios
 
-
-
-
 ## LOGICA DEL MAIN
 
 if __name__ == "__main__":
@@ -36,8 +33,8 @@ if __name__ == "__main__":
         audios_fm = cargar_audios("data/FM")
         audios_wn = cargar_audios("data/WN")
 
-        espectro_promedio(audios_fm, "espectro_FM.npy")
-        espectro_promedio(audios_wn, "espectro_WN.npy")
+        determinar_espectro(audios_fm, "espectro_FM.npy")
+        determinar_espectro(audios_wn, "espectro_WN.npy")
 
         print("Modelo entrenado Correctamente")
 

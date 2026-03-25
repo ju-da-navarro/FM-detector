@@ -1,10 +1,11 @@
 import tkinter as tk
 import sounddevice as sd
 from clasificador import clasificar_audio
-from espectro import LONGITUD, espectro_individual
+from espectro import LONGITUD, determinar_espectro
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import sys
 
 
 
@@ -26,6 +27,9 @@ def inicioInterfaz():
 
     label = tk.Label(root, text="Interfaz Grafica simple")
     label.pack()
+
+    boton = tk.Button(root, text="Grabar Audio")
+    boton.pack()
 
     label_resultado = tk.Label(
     root,
@@ -57,17 +61,17 @@ def inicioInterfaz():
     ax2.set_xlim(0, 4000)
 
     canvas = FigureCanvasTkAgg(fig, master=root)
-    canvas.get_tk_widget().pack()
+    canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
     
     def manejar_grabacion():
         audio = grabar_audio()  
         resultado = clasificar_audio(audio, espectro_fm, espectro_wn)
-        espectro_au= espectro_individual(audio)
+        espectro_au= determinar_espectro(audio)
 
         ax1.cla()
         ax2.cla()
         
-        color = "green" if resultado == "FM" else "blue"
+        color = "red"
 
         ax1.plot(frecuencias, espectro_wn, label="WN", color="blue")
         ax1.set_title("Espectro WN")
@@ -78,16 +82,22 @@ def inicioInterfaz():
         ax2.set_xlim(0, 4000)
 
         # añadir a ambas gráficas
-        ax1.plot(frecuencias, espectro_au, linestyle="--", alpha=0.7, color=color, label="Audio")
-        ax2.plot(frecuencias, espectro_au, linestyle="--", alpha=0.7, color=color, label="Audio")
+        ax1.plot(frecuencias, espectro_au, linestyle="--", alpha=0.4, color=color, label="Audio")
+        ax2.plot(frecuencias, espectro_au, linestyle="--", alpha=0.4, color=color, label="Audio")
 
         ax1.legend()
         ax2.legend()
 
         canvas.draw()  
         label_resultado.config(text=f"El audio analizado es: {resultado}")
+    
+    boton['command'] = manejar_grabacion
 
-    boton = tk.Button(root, text="Grabar Audio", command=manejar_grabacion)
-    boton.pack()
+    def cerrarVentana():    
+        print("Ventana cerrada, finalizando programa")
+        sd.stop()
+        root.destroy()
+        sys.exit(0)
 
+    root.protocol("WM_DELETE_WINDOW", cerrarVentana)
     root.mainloop()
