@@ -25,9 +25,6 @@ def inicioInterfaz():
     titulo.pack()
     root.geometry("800x400")
 
-    label = tk.Label(root, text="Interfaz Grafica simple")
-    label.pack()
-
     boton = tk.Button(root, text="Grabar Audio")
     boton.pack()
 

@@ -1,5 +1,5 @@
 import numpy as np
-from statsmodels.tsa.stattools import acf
+from statsmodels.tsa.stattools import acovf
 
 LONGITUD = 44100*2
 
@@ -15,8 +15,9 @@ def calcularFFT(audio):
 
     audio = recortar(audio)
     x = audio - np.mean(audio)
-    autocov = acf(x, nlags=LONGITUD-1, fft=True)
+    autocov = acovf(x,fft=True)
     return np.fft.rfft(autocov)
+    ##return autocov
 
 def determinar_espectro(audio_data, tipo = ""):
     if isinstance(audio_data, list):
@@ -33,4 +34,9 @@ def determinar_espectro(audio_data, tipo = ""):
         return espectro
     
     espectro = np.abs(calcularFFT(audio_data))
-    return (espectro / np.max(espectro)) if (np.max(espectro) != 0) else espectro
+    
+    if np.max(espectro) != 0 :
+        return (espectro / np.max(espectro))
+    else:
+        return espectro
+        
